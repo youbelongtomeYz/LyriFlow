@@ -1,21 +1,83 @@
+/* ====== Basic Page Styling ====== */
 body {
-  background: linear-gradient(135deg, #1db954, #191414);
-  color: white;
-  font-family: "Poppins", sans-serif;
-  text-align: center;
-  height: 100vh;
-  margin: 0;
-  padding-top: 40px;
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: linear-gradient(to bottom, #1e1e1e, #121212);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
 }
 
+/* ====== Header / Title ====== */
+h1 {
+    margin-top: 30px;
+    font-size: 36px;
+    color: #ff4081;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* ====== Audio Player ====== */
+audio {
+    margin: 20px 0;
+    width: 90%;
+    max-width: 600px;
+}
+
+/* ====== Lyrics Container ====== */
 #lyrics {
-  margin-top: 30px;
-  font-size: 1.2rem;
+    width: 90%;
+    max-width: 600px;
+    max-height: 300px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-.active {
-  color: #1db954;
-  font-weight: bold;
-  transform: scale(1.1);
-  transition: 0.3s;
+/* Each line of lyrics */
+#lyrics p {
+    margin: 5px 0;
+    font-size: 18px;
+    line-height: 1.5;
+    transition: color 0.3s, font-size 0.3s;
+}
+
+/* Highlighted line */
+#lyrics p.highlight {
+    color: #ff4081;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+/* Optional: Scrollbar styling */
+#lyrics::-webkit-scrollbar {
+    width: 8px;
+}
+
+#lyrics::-webkit-scrollbar-thumb {
+    background: #ff4081;
+    border-radius: 4px;
+}
+
+#lyrics::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 500px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    #lyrics p {
+        font-size: 16px;
+    }
+
+    #lyrics p.highlight {
+        font-size: 18px;
+    }
 }

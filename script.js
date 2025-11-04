@@ -1,42 +1,52 @@
-const audio = document.getElementById("audio");
-const lyricsDiv = document.getElementById("lyrics");
-let lyrics = [];
-let currentLine = 0;
+const audio = document.getElementById('audio');
+const lyricsContainer = document.getElementById('lyrics');
 
-fetch("lyrics/example.lrc")
-  .then((res) => res.text())
-  .then(parseLyrics);
+let lyrics = []; // array of {time, text}
+let currentLine = -1;
 
-function parseLyrics(text) {
-  const lines = text
-    .split("\n")
-    .map((line) => {
+// Load LRC file
+fetch('lyrics/example.lrc')
+  .then(response => response.text())
+  .then(data => {
+    // Split lines and parse timestamps
+    const lines = data.split('\n').filter(line => line.includes(']'));
+    lines.forEach(line => {
       const match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-      if (!match) return null;
-      const [, min, sec, lyric] = match;
-      return { time: parseFloat(min) * 60 + parseFloat(sec), lyric };
-    })
-    .filter(Boolean);
-  lyrics = lines;
-  lyrics.forEach((line) => {
-    const p = document.createElement("p");
-    p.textContent = line.lyric;
-    lyricsDiv.appendChild(p);
-  });
-}
+      if (match) {
+        const minutes = parseInt(match[1]);
+        const seconds = parseFloat(match[2]);
+        const text = match[3].trim();
+        const time = minutes * 60 + seconds;
+        lyrics.push({ time, text });
 
-audio.addEventListener("timeupdate", () => {
+        // Add paragraph to HTML
+        const p = document.createElement('p');
+        p.textContent = text;
+        lyricsContainer.appendChild(p);
+      }
+    });
+  });
+
+// Highlight lyrics as song plays
+audio.addEventListener('timeupdate', () => {
   if (!lyrics.length) return;
-  const currentTime = audio.currentTime;
-  const index = lyrics.findIndex(
-    (line, i) =>
-      currentTime >= line.time &&
-      (i === lyrics.length - 1 || currentTime < lyrics[i + 1].time)
-  );
-  if (index !== -1 && index !== currentLine) {
-    const ps = lyricsDiv.querySelectorAll("p");
-    ps.forEach((p) => p.classList.remove("active"));
-    ps[index].classList.add("active");
-    currentLine = index;
+
+  // Find the current line
+  for (let i = 0; i < lyrics.length; i++) {
+    if (audio.currentTime >= lyrics[i].time && (i === lyrics.length - 1 || audio.currentTime < lyrics[i + 1].time)) {
+      if (currentLine !== i) {
+        // Remove highlight from previous line
+        if (currentLine >= 0) {
+          lyricsContainer.children[currentLine].classList.remove('highlight');
+        }
+        // Highlight current line
+        lyricsContainer.children[i].classList.add('highlight');
+        currentLine = i;
+
+        // Scroll the container to keep the line in view
+        lyricsContainer.children[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      break;
+    }
   }
 });
