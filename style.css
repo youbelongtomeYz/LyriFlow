@@ -1,0 +1,21 @@
+body {
+  background: linear-gradient(135deg, #1db954, #191414);
+  color: white;
+  font-family: "Poppins", sans-serif;
+  text-align: center;
+  height: 100vh;
+  margin: 0;
+  padding-top: 40px;
+}
+
+#lyrics {
+  margin-top: 30px;
+  font-size: 1.2rem;
+}
+
+.active {
+  color: #1db954;
+  font-weight: bold;
+  transform: scale(1.1);
+  transition: 0.3s;
+}
