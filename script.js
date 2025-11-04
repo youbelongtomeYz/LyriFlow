@@ -53,7 +53,7 @@ function fetchLyrics(artist, title) {
 function startAutoHighlight() {
   // Approximate highlight by interval (since embed player may not provide currentTime)
   const totalLines = currentLines.length;
-  const highlightInterval = 4000; // every 4 seconds change line (you can adjust)
+  const highlightInterval = 4000; // every 4 seconds change line
   lineInterval = setInterval(() => {
     if (currentLineIndex + 1 < totalLines) {
       if (currentLineIndex >= 0) {
