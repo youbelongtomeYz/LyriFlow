@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LyriFlow</title>
+  <meta charset="UTF‑8">
+  <meta name="viewport" content="width=device‑width, initial‑scale=1.0">
+  <title>LyriFlow Library</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>LyriFlow</h1>
+  <h1>LyriFlow Library</h1>
 
-  <audio id="audio" controls src="songs/example.mp3"></audio>
+  <div id="library">
+    <!-- Update the data‑song url/identifier and artist/title -->
+    <button data‑song="https://www.youtube.com/embed/VIDEO_ID1" data‑artist="The Weeknd" data‑title="Blinding Lights">Blinding Lights</button>
+    <button data‑song="https://www.youtube.com/embed/VIDEO_ID2" data‑artist="The Weeknd" data‑title="Save Your Tears">Save Your Tears</button>
+    <button data‑song="https://www.youtube.com/embed/VIDEO_ID3" data‑artist="Another Artist" data‑title="Another Song">Another Song</button>
+  </div>
+
+  <div id="playerContainer">
+    <iframe id="player" width="560" height="315" src="" frameborder="0" allowfullscreen></iframe>
+  </div>
 
   <div id="lyrics"></div>
 
