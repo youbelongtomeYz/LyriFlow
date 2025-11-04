@@ -1,52 +1,56 @@
 const audio = document.getElementById('audio');
 const lyricsContainer = document.getElementById('lyrics');
 
-let lyrics = []; // array of {time, text}
-let currentLine = -1;
+// Song info
+const artist = "The Weeknd";
+const title = "Lost in the Fire";
 
-// Load LRC file
-fetch('lyrics/example.lrc')
-  .then(response => response.text())
-  .then(data => {
-    // Split lines and parse timestamps
-    const lines = data.split('\n').filter(line => line.includes(']'));
-    lines.forEach(line => {
-      const match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-      if (match) {
-        const minutes = parseInt(match[1]);
-        const seconds = parseFloat(match[2]);
-        const text = match[3].trim();
-        const time = minutes * 60 + seconds;
-        lyrics.push({ time, text });
-
-        // Add paragraph to HTML
-        const p = document.createElement('p');
-        p.textContent = text;
-        lyricsContainer.appendChild(p);
-      }
-    });
-  });
-
-// Highlight lyrics as song plays
-audio.addEventListener('timeupdate', () => {
-  if (!lyrics.length) return;
-
-  // Find the current line
-  for (let i = 0; i < lyrics.length; i++) {
-    if (audio.currentTime >= lyrics[i].time && (i === lyrics.length - 1 || audio.currentTime < lyrics[i + 1].time)) {
-      if (currentLine !== i) {
-        // Remove highlight from previous line
-        if (currentLine >= 0) {
-          lyricsContainer.children[currentLine].classList.remove('highlight');
-        }
-        // Highlight current line
-        lyricsContainer.children[i].classList.add('highlight');
-        currentLine = i;
-
-        // Scroll the container to keep the line in view
-        lyricsContainer.children[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      break;
-    }
-  }
+// Wait for audio metadata to load (duration)
+audio.addEventListener('loadedmetadata', () => {
+  fetchLyrics();
 });
+
+function fetchLyrics() {
+  fetch(`https://api.lyrics.ovh/v1/${artist}/${title}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.lyrics) {
+        const lines = data.lyrics.split('\n').filter(line => line.trim() !== '');
+        const duration = audio.duration; // duration in seconds
+        const lineDuration = duration / lines.length; // approximate duration per line
+
+        lines.forEach((line, index) => {
+          const p = document.createElement('p');
+          p.textContent = line;
+          p.dataset.time = index * lineDuration;
+          lyricsContainer.appendChild(p);
+        });
+
+        highlightLyrics(lines.length);
+      } else {
+        lyricsContainer.textContent = "Lyrics not found!";
+      }
+    })
+    .catch(err => {
+      console.error("Error fetching lyrics:", err);
+      lyricsContainer.textContent = "Error loading lyrics.";
+    });
+}
+
+function highlightLyrics(lineCount) {
+  let currentLine = -1;
+  audio.addEventListener('timeupdate', () => {
+    for (let i = 0; i < lineCount; i++) {
+      const p = lyricsContainer.children[i];
+      const time = parseFloat(p.dataset.time);
+      if (audio.currentTime >= time && currentLine !== i) {
+        // Remove previous highlight
+        if (currentLine >= 0) lyricsContainer.children[currentLine].classList.remove('highlight');
+        // Highlight current line
+        p.classList.add('highlight');
+        currentLine = i;
+        p.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  });
+}
